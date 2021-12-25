@@ -1,6 +1,6 @@
 class Task < ApplicationRecord
-  validates :name, presenece: true
-  validates :content, presenece: true
-  validates :priority, presenece: true
-  validates :status, presenece: true
+  validates :name, presence: true
+  validates :content, presence: true
+  validates :priority, presence: true
+  validates :status, presence: true
 end
