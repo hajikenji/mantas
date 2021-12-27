@@ -31,15 +31,3 @@
 |name  | string |
 |email  | string |
 |password_digest  | string |
-
-## heroku deproy
-
-1. 作業のディレクトリ、ブランチへcd
-2. ``` heroku create ```
-3. ```rails assets:precompile RAILS_ENV=production```
-4.  gitにコミットまで行う。
-5.  ```heroku buildpacks:set heroku/ruby heroku  ```
-6.  ```buildpacks:add --index 1 heroku/nodejs```
-7.  ```git push heroku master``` or ```git push heroku [branch]:master```
-8.  ```heroku run rails db:migrate```
-上記で完了。
