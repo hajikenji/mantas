@@ -11,6 +11,20 @@ module Mantas
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
+    config.generators do |g|
+      g.test_framework :rspec,
+                       model_specs: true,
+                       view_specs: false,
+                       helper_specs: false,
+                       routing_specs: false,
+                       controller_specs: false,
+                       request_specs: false
+      g.factory_bot false
+
+      # ファクトリファイルの置き場を変更
+      g.factory_bot dir: 'spec/support/factory_bot.rb'
+    end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

@@ -1,24 +1,33 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+テーブル構成を下記に記載します。
 
-Things you may want to cover:
+### labels
+| column  | data_type |
+|---|---|
+|id  | primary_key |
+|tag  | string |
+|task_id(FK) | bigint |
+|user_id(FK)  | bigint |
 
-* Ruby version
+    
+### tasks
+    
+ | column  | data_type |
+|---|---|
+|id  | primary_key |
+|name  | string |
+|content  | text |
+|time  | string |
+|priority  | string |
+|status  | string |
+|user_id(FK)  | bigint |
 
-* System dependencies
+### users    
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+| column  | data_type |
+|---|---|
+|id  | primary_key |
+|name  | string |
+|email  | string |
+|password_digest  | string |
