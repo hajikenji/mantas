@@ -22,7 +22,7 @@ def create_task
   fill_in 'task_time', with: @task.time
   fill_in 'task_priority', with: @task.priority
   fill_in 'task_status', with: @task.status
-  click_on 'Create Task'
+  click_on '登録する'
 end
 
 RSpec.describe 'タスク管理機能', type: :system do
