@@ -1,13 +1,29 @@
 <p id="notice"><%= notice %></p>
 <h1>Tasks</h1>
+<%= form_with(url: tasks_path, local: true, method: :get) do |form| %>
+<div>
+<%= form.label :search_name %>
+<%= form.text_field :search_name, value: @search_name %>
+</div>
+<div class="field">
+    <%= form.label :status %>
+    <%= form.select :status, {'選択': '無', '未着手': 0, '着手中': 1, '完了': 2} , {selected: @status}%>
+</div>
+<%= form.submit %>
+<br>
+<br>
+
+<% end %>
+</div>
 <table>
   <thead>
     <tr>
       <th>Name</th>
       <th>Content</th>
-      <th>Time_Limit<%= link_to '並び替え'%></th>
-      <th>Priority</th>
-      <th>更新日時</th>
+      <th class="task_link",class="link-primary"><%= link_to 'TimeLimit', tasks_path(name: "sort_time") %></th>
+      <th class="task_link"><%= link_to 'Priority'%></th>
+      <th class="task_link"><%= link_to 'Status'%></th>
+      <th class="task_link"><%= link_to '更新日時', tasks_path(name: "sort_update") %></th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -16,8 +32,19 @@
       <tr>
         <td><%= task.name %></td>
         <td><%= task.content %></td>
-        <td><%= task.time %></td>
+        <td class="time"><%= task.time %></td>
         <td><%= task.priority %></td>
+
+        <td>
+        <% case task.status %>
+        <% when "0" %>
+        未着手
+        <% when "1" %>
+        着手中
+        <% when "2" %>
+        完了
+        <% end %></td>
+
         <td class="update_time"><%= task.updated_at.strftime("%Y年%m月%d日%H時%M分%S") %></td>
         <td><%= link_to 'Show', task %></td>
         <td><%= link_to 'Edit', edit_task_path(task) %></td>
@@ -27,4 +54,6 @@
   </tbody>
 </table>
 <br>
+
+
 <%= link_to 'New Task', new_task_path %>

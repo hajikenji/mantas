@@ -1,13 +1,36 @@
 class TasksController < ApplicationController
   before_action :set_task, only: %i[show edit update destroy]
 
-  # GET /tasks or /tasks.json
   def index
-    @tasks = Task.all.order(updated_at: "DESC")
+
+    @status = params[:status]
+    @search_name = params[:search_name]
+
+    @tasks = Task.all
+    
+    @tasks = @tasks.where('name like ?', "%#{@search_name}%") if @search_name
+
+    case params[:status]
+    when "0"
+      @tasks = @tasks.status_0_index
+    when "1"
+      @tasks = @tasks.status_1_index
+    when "2"
+      @tasks = @tasks.status_2_index
+    end
+
+    case params[:name]
+    when "sort_time"
+      @tasks = @tasks.order_time
+    when 'sort_update'
+      @tasks = @tasks.order_update
+    end
+
   end
 
   # GET /tasks/1 or /tasks/1.json
   def show
+    
   end
 
   # GET /tasks/new
@@ -67,4 +90,6 @@ class TasksController < ApplicationController
     def task_params
       params.require(:task).permit(:name, :content, :time, :priority, :status)
     end
+
+
 end

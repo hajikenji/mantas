@@ -17,7 +17,14 @@
 </p>
 <p>
   <strong>Status:</strong>
-  <%= @task.status %>
+  <% case @task.status %>
+        <% when "0" %>
+        未着手
+        <% when "1" %>
+        着手中
+        <% when "2" %>
+        完了
+        <% end %>
 </p>
 <%= link_to 'Edit', edit_task_path(@task) %> |
 <%= link_to 'Back', tasks_path %>

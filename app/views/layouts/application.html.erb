@@ -17,7 +17,7 @@
       <%= link_to 'ログイン', new_session_path %>
     <% end %>
     <%= link_to 'サインアップ', new_user_path %>
-    <%= link_to 'タスクへ', tasks_path %>
+    <%= link_to 'タスクへ', tasks_path(reset_search_session: true) %>
     <%= yield %>
   </body>
 </html>
