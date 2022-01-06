@@ -5,25 +5,33 @@ class TasksController < ApplicationController
 
     @status = params[:status]
     @search_name = params[:search_name]
+    @priority = params[:priority]
 
     @tasks = Task.all
-    
+    # binding.pry
     @tasks = @tasks.search_ambiguous(@search_name) if @search_name
 
-    case params[:status]
-    when "0"
-      @tasks = @tasks.status_0_index
-    when "1"
-      @tasks = @tasks.status_1_index
-    when "2"
-      @tasks = @tasks.status_2_index
-    end
+    @tasks = @tasks.status_index(params[:status]) if params[:status].present?
+    @tasks = @tasks.priority_index(params[:priority]) if params[:priority].present?
+
+    # @tasks = @tasks.priority_index(params[:priority]) if params[:priority].present?
+
+    # case params[:status]
+    # when "0"
+    #   @tasks = @tasks.status_0_index
+    # when "1"
+    #   @tasks = @tasks.status_1_index
+    # when "2"
+    #   @tasks = @tasks.status_2_index
+    # end
 
     case params[:name]
     when "sort_time"
       @tasks = @tasks.order_time
     when 'sort_update'
       @tasks = @tasks.order_update
+    when 'sort_priority'
+      @tasks = @tasks.order_priority
     end
 
   end

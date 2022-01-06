@@ -18,11 +18,11 @@
 <p>
   <strong>Status:</strong>
   <% case @task.status %>
-        <% when "0" %>
-        未着手
         <% when "1" %>
-        着手中
+        未着手
         <% when "2" %>
+        着手中
+        <% when "3" %>
         完了
         <% end %>
 </p>

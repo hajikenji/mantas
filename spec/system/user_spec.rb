@@ -30,15 +30,24 @@ def create_task
   fill_in 'task_name', with: @task.name
   fill_in 'task_content', with: @task.content
   fill_in 'task_time', with: @task.time
-  fill_in 'task_priority', with: @task.priority
-  a = rand(0..2)
+  # fill_in 'task_priority', with: @task.priority
+  a = rand(1..3)
   case a
-  when 0
-    select '未着手', from: 'task_status'
   when 1
-    select '着手中', from: 'task_status'
+    select '未着手', from: 'task_status'
   when 2
+    select '着手中', from: 'task_status'
+  when 3
     select '完了', from: 'task_status'
+  end
+  a = rand(4..6)
+  case a
+  when 4
+    select '高', from: 'task_priority'
+  when 5
+    select '中', from: 'task_priority'
+  when 6
+    select '低', from: 'task_priority'
   end
 
   click_on '登録する'
@@ -78,7 +87,7 @@ RSpec.describe 'タスク管理機能', type: :system do
       it '作成したタスクが表示される' do
         to_task
         create_task
-        expect(page).to have_content 'dddd'
+        expect(page).to have_content 'd'
       end
     end
   end
@@ -205,7 +214,7 @@ describe 'タスク管理機能', type: :system do
         @make_tasks.each do #作成した時のやつで各々のタスクのstatusを集計
           |d| list << d[:status]
         end
-        expect(expect_list[0]).to eq list.count("0") #未着手が出てきた数が合えば通る
+        expect(expect_list[0]).to eq list.count("1") #未着手が出てきた数が合えば通る
 
       end
     end
@@ -226,12 +235,27 @@ describe 'タスク管理機能', type: :system do
 
         list = []
         @make_tasks.each do |d| 
-          if d[:name].include?(@make_tasks[0][:name].slice(1)) && d[:status] == "0"
+          if d[:name].include?(@make_tasks[0][:name].slice(1)) && d[:status] == "1"
           list << d
           end  
         end
         
         expect(expect_num).to eq list.size #検索で出てきた数が合えば通る
+      end
+    end
+    context '優先順位でソートする' do
+      it '高い→低いの順で並ぶ' do
+        to_task
+        sleep(0.1)
+        
+        many_make_tasks(num: 15)
+        # @many_tasks = @make_tasks.order(priority: 'ASC')
+
+        click_on 'タスクへ'
+        click_on 'Priority'
+
+        expect_fact = all('tbody tr')[0].find('.priority').text
+        expect(expect_fact).to eq "高"
       end
     end
   end

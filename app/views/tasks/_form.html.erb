@@ -23,11 +23,11 @@
   </div>
   <div class="field">
     <%= form.label :priority %>
-    <%= form.text_field :priority %>
+    <%= form.select :priority, Task.priorities.keys %>
   </div>
   <div class="field">
     <%= form.label :status %>
-    <%= form.select :status, {'未着手': 0, '着手中': 1, '完了': 2} %>
+    <%= form.select :status, { '未着手': 1, '着手中': 2, '完了': 3} %>
   </div>
   <div class="actions">
     <%= form.submit %>

@@ -74,17 +74,17 @@ RSpec.describe 'タスクモデル機能', type: :model do
     end
     context 'scopeメソッドでステータス検索をした場合' do
       it "ステータスに完全一致するタスクが絞り込まれる" do
-        expect(Task.status_0_index).to include(task)
-        expect(Task.status_0_index).not_to include(second_task)
+        expect(Task.status_index("0")).to include(task)
+        expect(Task.status_index("0")).not_to include(second_task)
 
-        expect(Task.status_0_index.size).to eq 1
+        expect(Task.status_index("0").size).to eq 1
       end
     end
     context 'scopeメソッドでタイトルのあいまい検索とステータス検索をした場合' do
       it "検索キーワードをタイトルに含み、かつステータスに完全一致するタスク絞り込まれる" do
         # ここに内容を記載する
         search_name = task[:name].slice(1)
-        fact = Task.search_ambiguous(search_name) && Task.status_0_index
+        fact = Task.search_ambiguous(search_name) && Task.status_index("0")
 
         expect(fact).to include(task)
         expect(fact).not_to include(second_task)
