@@ -20,10 +20,10 @@
     <tr>
       <th>Name</th>
       <th>Content</th>
-      <th class="task_link",class="link-primary"><%= link_to 'TimeLimit', tasks_path(name: "sort_time") %></th>
+      <th class="task_link",class="link-primary"><%= link_to 'TimeLimit', tasks_path(name: "sort_time", status: @status, search_name: @search_name) %></th>
       <th class="task_link"><%= link_to 'Priority'%></th>
       <th class="task_link"><%= link_to 'Status'%></th>
-      <th class="task_link"><%= link_to '更新日時', tasks_path(name: "sort_update") %></th>
+      <th class="task_link"><%= link_to '更新日時', tasks_path(name: "sort_update", status: @status, search_name: @search_name) %></th>
       <th colspan="3"></th>
     </tr>
   </thead>

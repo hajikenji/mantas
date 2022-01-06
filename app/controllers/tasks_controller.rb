@@ -8,7 +8,7 @@ class TasksController < ApplicationController
 
     @tasks = Task.all
     
-    @tasks = @tasks.where('name like ?', "%#{@search_name}%") if @search_name
+    @tasks = @tasks.search_ambiguous(@search_name) if @search_name
 
     case params[:status]
     when "0"

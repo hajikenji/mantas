@@ -3,8 +3,8 @@ require 'rails_helper'
 def to_task
   @user = FactoryBot.create(:user)
   @task = FactoryBot.build(:task)
-  @task[:user_id] = @user.id
-  @task.save
+  # @task[:user_id] = @user.id
+  # @task.save
 
   visit new_session_path
 
@@ -21,17 +21,26 @@ end
     @task.save
     @make_times += 1
     @make_tasks << @task
-    sleep(0.5)
+    
   end
 
 def create_task
+  
   click_on 'New Task'
   fill_in 'task_name', with: @task.name
   fill_in 'task_content', with: @task.content
   fill_in 'task_time', with: @task.time
   fill_in 'task_priority', with: @task.priority
-  
-  find('#task_status').find("option[value=#{a}]")
+  a = rand(0..2)
+  case a
+  when 0
+    select '未着手', from: 'task_status'
+  when 1
+    select '着手中', from: 'task_status'
+  when 2
+    select '完了', from: 'task_status'
+  end
+
   click_on '登録する'
 end
 
@@ -46,11 +55,22 @@ def confirm_task_index(place, target)
   # binding.pry
   @list = []
   loop_num = 0
-  (num + 1).times do #to_taskで初回作成分があるため0でなく1
+  (num).times do
     @list << all(place)[loop_num].find(target).text
     loop_num += 1
   end
 end
+
+def many_make_tasks(num: 5)
+  @make_times = 0 #make_task用変数
+  @make_tasks = [] #make_task用変数
+  num.times do
+    make_task
+  end
+  visit tasks_path
+end
+
+
 
 RSpec.describe 'タスク管理機能', type: :system do
   describe '新規作成機能' do
@@ -76,7 +96,9 @@ RSpec.describe 'タスク管理機能', type: :system do
       it '通る' do
         to_task
         confirm_task_index('tbody tr', '.update_time')
-        expect(page.all('tbody tr')[0].find('.update_time').text).to be >= @list[@list.size - 1]
+        click_on '更新日時'
+        sleep(1)
+        expect(page.all('tbody tr')[0].find('.update_time').text).to eq @list[@list.size - 1]
       end
     end
 
@@ -88,7 +110,7 @@ RSpec.describe 'タスク管理機能', type: :system do
         sleep(1)
         expect_list = []
         num = 0
-        (@make_times + 1).times do #to_taskで初回作成分があるため0でなく1
+        (@make_times).times do #to_taskで初回作成分があるため0でなく1
           p num
           expect_list << all('tbody tr')[num].find('.time').text
           num += 1
@@ -96,10 +118,10 @@ RSpec.describe 'タスク管理機能', type: :system do
         @make_tasks.sort
         expect_list.sort.reverse
         @list.sort.reverse
-        p expect_list
 
         expect(expect_list.sort.reverse).to eq @list.sort.reverse
       end
+
       it '通らない(reverseしないので昇順 == 降順になるため)' do
         to_task
         confirm_task_index('tbody tr', '.time')
@@ -107,7 +129,7 @@ RSpec.describe 'タスク管理機能', type: :system do
         sleep(1)
         expect_list = []
         num = 0
-        (@make_times + 1).times do #to_taskで初回作成分があるため0でなく1
+        (@make_times).times do 
           expect_list << all('tbody tr')[num].find('.time').text
           num += 1
         end
@@ -126,13 +148,90 @@ RSpec.describe 'タスク管理機能', type: :system do
         create_task
         click_on 'タスクへ'
         # all('tbody tr')[1].click_link 'Show'
-        click_link 'Show', href: task_path(@task.id)
+        # click_link 'Show', href: task_path(@task.id)
+        click_on 'Show'
         expect(page).to have_content @task.name
       end
       it 'わざと間違える' do
         to_task
+        create_task
+        click_on 'タスクへ'
         all('tbody tr')[0].click_link 'Show'
         expect(page).not_to have_content '間違えerr'
+      end
+    end
+  end
+end
+
+describe 'タスク管理機能', type: :system do
+  describe '検索機能' do
+    # before do
+    #   # 必要に応じて、テストデータの内容を変更して構わない
+    #   FactoryBot.create(:task, title: "task")
+    #   FactoryBot.create(:second_task, title: "sample")
+    # end
+    context 'タイトルであいまい検索をした場合' do
+      it "検索キーワードを含むタスクで絞り込まれる" do
+        to_task
+        create_task
+        click_on 'タスクへ'
+
+        fill_in 'search_name', with: @task.name.slice(1)
+        click_on '保存する'
+        expect(page).to have_content @task.name
+      end
+    end
+    context 'ステータス検索をした場合' do
+      it "ステータスに完全一致するタスクが絞り込まれる" do
+        to_task
+        sleep(0.1)
+        many_make_tasks
+        click_on 'タスクへ'
+        expect_list = []
+ 
+        select '未着手', from: 'status' #何個でてくるかをリストに入れる
+        click_on '保存する'
+        expect_list << all('tbody tr').size
+ 
+        select '着手中', from: 'status'
+        click_on '保存する'
+        expect_list << all('tbody tr').size
+  
+        select '完了', from: 'status'
+        click_on '保存する'
+        expect_list << all('tbody tr').size
+
+        list = []
+        @make_tasks.each do #作成した時のやつで各々のタスクのstatusを集計
+          |d| list << d[:status]
+        end
+        expect(expect_list[0]).to eq list.count("0") #未着手が出てきた数が合えば通る
+
+      end
+    end
+    context 'タイトルのあいまい検索とステータス検索をした場合' do
+      it "検索キーワードをタイトルに含み、かつステータスに完全一致するタスク絞り込まれる" do
+        to_task
+        sleep(0.1)
+        
+        many_make_tasks(num: 120)
+                
+        click_on 'タスクへ'
+
+        select '未着手', from: 'status' #何行でてくるかをリストに入れる
+        fill_in 'search_name', with: @make_tasks[0][:name].slice(1)
+        click_on '保存する'
+
+        expect_num = all('tbody tr').size
+
+        list = []
+        @make_tasks.each do |d| 
+          if d[:name].include?(@make_tasks[0][:name].slice(1)) && d[:status] == "0"
+          list << d
+          end  
+        end
+        
+        expect(expect_num).to eq list.size #検索で出てきた数が合えば通る
       end
     end
   end
