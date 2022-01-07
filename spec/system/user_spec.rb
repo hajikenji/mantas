@@ -228,14 +228,14 @@ describe 'タスク管理機能', type: :system do
         click_on 'タスクへ'
 
         select '未着手', from: 'status' #何行でてくるかをリストに入れる
-        fill_in 'search_name', with: @make_tasks[0][:name].slice(1)
+        fill_in 'search_name', with: "ナウシカ"
         click_on '保存する'
 
         expect_num = all('tbody tr').size
 
         list = []
         @make_tasks.each do |d| 
-          if d[:name].include?(@make_tasks[0][:name].slice(1)) && d[:status] == "1"
+          if d[:name].include?("ナウシカ") && d[:status] == "1"
           list << d
           end  
         end
