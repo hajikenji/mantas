@@ -19,17 +19,18 @@
   </div>
   <div class="field">
     <%= form.label :time %>
-    <%= form.text_field :time %>
+    <%= form.datetime_field :time , placeholder: "例:○月○日○時 等" %>
   </div>
   <div class="field">
     <%= form.label :priority %>
-    <%= form.text_field :priority %>
+    <%= form.select :priority, Task.priorities.keys %>
   </div>
   <div class="field">
     <%= form.label :status %>
-    <%= form.text_field :status %>
+    <%= form.select :status, { '未着手': 1, '着手中': 2, '完了': 3} %>
   </div>
-  <div class="actions">
-    <%= form.submit %>
+  <div>
+    <%= form.submit class: "btn btn-primary"%>
   </div>
+  
 <% end %>

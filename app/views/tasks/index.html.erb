@@ -1,13 +1,34 @@
 <p id="notice"><%= notice %></p>
 <h1>Tasks</h1>
+<%= form_with(url: tasks_path, local: true, method: :get) do |form| %>
+<div>
+<%= form.label :search_name %>
+<%= form.text_field :search_name, value: @search_name %>
+</div>
+<div class="field">
+    <%= form.label :status %>
+    <%= form.select :status, { '未着手': 1, '着手中': 2, '完了': 3} , { include_blank: '選択', selected: @status }%>
+</div>
+<div class="field">
+    <%= form.label :priority %>
+    <%= form.select :priority, Task.priorities.keys, { include_blank: '選択', selected: @priority } %>
+</div>
+<%= form.submit class: "btn btn-success" %>
+<br>
+<br>
+
+<% end %>
+</div>
 <table>
   <thead>
     <tr>
       <th>Name</th>
       <th>Content</th>
-      <th>Time</th>
-      <th>Priority</th>
-      <th>更新日時</th>
+      <th class="task_link"><%= link_to 'TimeLimit (click for Sorting)', tasks_path(name: "sort_time", status: @status, search_name: @search_name, priority: @priority), class: "text-success"%></th>
+      <th class="task_link"><%= link_to 'Priority', tasks_path(name: "sort_priority", status: @status, search_name: @search_name, priority: @priority), class: "text-success"%></th>
+
+      <th ><%# link_to 'Status'%>Status</th>
+      <th class="task_link"><%= link_to '更新日時', tasks_path(name: "sort_update", status: @status, search_name: @search_name, priority: @priority), class: "text-success" %></th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -16,15 +37,29 @@
       <tr>
         <td><%= task.name %></td>
         <td><%= task.content %></td>
-        <td><%= task.time %></td>
-        <td><%= task.priority %></td>
+        <td class="time"><%= task.time.strftime("%Y年%m月%d日%H時%M分") %></td>
+        <td class="priority"><%= task.priority %></td>
+
+        <td>
+        <% case task.status %>
+        <% when "1" %>
+        未着手
+        <% when "2" %>
+        着手中
+        <% when "3" %>
+        完了
+        <% end %></td>
+
         <td class="update_time"><%= task.updated_at.strftime("%Y年%m月%d日%H時%M分%S") %></td>
-        <td><%= link_to 'Show', task %></td>
-        <td><%= link_to 'Edit', edit_task_path(task) %></td>
-        <td><%= link_to 'Destroy', task, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', task , class: "text-primary"%></td>
+        <td><%= link_to 'Edit', edit_task_path(task), class: "text-primary" %></td>
+        <td><%= link_to 'Destroy', task, method: :delete, data: { confirm: 'Are you sure?' } , class: "text-primary"%></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+<%= paginate @tasks %>
 <br>
-<%= link_to 'New Task', new_task_path %>
+
+
+<%= link_to 'New Task', new_task_path, class: "text-primary"%>
