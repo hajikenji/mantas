@@ -8,22 +8,10 @@ class TasksController < ApplicationController
     @priority = params[:priority]
 
     @tasks = Task.all
-    # binding.pry
     @tasks = @tasks.search_ambiguous(@search_name) if @search_name
 
     @tasks = @tasks.status_index(params[:status]) if params[:status].present?
     @tasks = @tasks.priority_index(params[:priority]) if params[:priority].present?
-
-    # @tasks = @tasks.priority_index(params[:priority]) if params[:priority].present?
-
-    # case params[:status]
-    # when "0"
-    #   @tasks = @tasks.status_0_index
-    # when "1"
-    #   @tasks = @tasks.status_1_index
-    # when "2"
-    #   @tasks = @tasks.status_2_index
-    # end
 
     case params[:name]
     when "sort_time"
@@ -34,9 +22,10 @@ class TasksController < ApplicationController
       @tasks = @tasks.order_priority
     end
 
+    @tasks = @tasks.page(params[:page]).per(10)
+
   end
 
-  # GET /tasks/1 or /tasks/1.json
   def show
     
   end

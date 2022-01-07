@@ -29,8 +29,8 @@
     <%= form.label :status %>
     <%= form.select :status, { '未着手': 1, '着手中': 2, '完了': 3} %>
   </div>
-  <div class="actions">
-    <%= form.submit %>
+  <div>
+    <%= form.submit class: "btn btn-primary"%>
   </div>
   
 <% end %>

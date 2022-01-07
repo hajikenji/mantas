@@ -253,6 +253,7 @@ describe 'タスク管理機能', type: :system do
 
         click_on 'タスクへ'
         click_on 'Priority'
+        sleep(0.1)
 
         expect_fact = all('tbody tr')[0].find('.priority').text
         expect(expect_fact).to eq "高"
