@@ -27,7 +27,7 @@ class Admin::UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to @user, notice: "User was successfully created." }
+        format.html { redirect_to admin_users_path, notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -52,11 +52,12 @@ class Admin::UsersController < ApplicationController
 
   # DELETE /users/1 or /users/1.json
   def destroy
+    
+    # flash[:danger] = "このユーザーを消去すると管理者が0人になります。" unless @user.destroy
     @user.destroy
-    respond_to do |format|
-      format.html { redirect_to admin_users_path, notice: "User was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    # redirect_to admin_users_path, notice: "User was successfully destroyed."
+    redirect_to admin_users_path, notice: @user.errors.messages[:notice].first #エラー文出す用
+
   end
 
   private
@@ -71,7 +72,9 @@ class Admin::UsersController < ApplicationController
     end
 
     def protect_from_general_user
-      redirect_to tasks_path unless current_user.admin
-      flash[:danger] = '管理者権限がありません'
+      unless current_user.admin
+        redirect_to tasks_path
+        flash[:danger] = '管理者権限がありません'
+      end
     end
 end

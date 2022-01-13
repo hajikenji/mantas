@@ -73,7 +73,9 @@ class UsersController < ApplicationController
     end
 
     def protect_other_user
-      redirect_to tasks_path unless current_user.id.to_s == params[:id]
+      if current_user.present?
+        redirect_to tasks_path unless current_user.id.to_s == params[:id]
+      end
     end
 
     def protect_from_general_user

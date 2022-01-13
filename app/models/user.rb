@@ -9,6 +9,8 @@ class User < ApplicationRecord
   has_many :labels, dependent: :destroy
 
   before_update :stop_for_last1
+  # after_destroy :stop_for_last1_des
+  before_destroy :stop_for_last1_des2
 
   private
 
@@ -23,6 +25,21 @@ class User < ApplicationRecord
         errors.add(:base, "このユーザーのadminを不許可にすると管理者が0人になります。")
         throw(:abort)
       end
+    end
+  end
+
+  def stop_for_last1_des
+    if User.where(admin: true).count == 0
+      errors.add(:notice, "このユーザーを消去すると管理者が0人になります。")
+
+    end
+  end
+  def stop_for_last1_des2
+    if User.where(admin: true).count == 1 && self.admin == true
+      errors.add(:notice, "このユーザーを消去すると管理者が0人になります。")
+      throw(:abort)
+    else
+      errors.add(:notice, "ユーザを削除しました。")
     end
   end
 

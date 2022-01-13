@@ -23,6 +23,7 @@ class TasksController < ApplicationController
     end
 
     @tasks = @tasks.page(params[:page]).per(10)
+    # User.find(41)[:admin] = true 
 
   end
 
