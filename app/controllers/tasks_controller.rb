@@ -7,7 +7,7 @@ class TasksController < ApplicationController
     @search_name = params[:search_name]
     @priority = params[:priority]
 
-    @tasks = Task.all
+    @tasks = current_user.tasks
     @tasks = @tasks.search_ambiguous(@search_name) if @search_name
 
     @tasks = @tasks.status_index(params[:status]) if params[:status].present?

@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>
+<h3>Tasks</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Content</th>
+      <th>TimeLimit</th>
+      <th>Priority</th>
+      <th>更新日時</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tasks.each do |t| %>
+    <tr>
+      <td><%= t.name %></td>
+      <td><%= t.content %></td>
+      <td><%= t.time.strftime("%Y年%m月%d日%H時%M分") %></td>
+      <td><%= t.priority %></td>
+      <td>
+        <% case t.status %>
+        <% when "1" %>
+        未着手
+        <% when "2" %>
+        着手中
+        <% when "3" %>
+        完了
+        <% end %></td>
+        <td><%= t.updated_at.strftime("%Y年%m月%d日%H時%M分%S") %></td>
+    </tr>
+    <% end %>
+      
+  </tbody>
+  <p>管理者権限:<%= @user.admin %></p>
+</table>
+

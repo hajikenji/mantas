@@ -1,8 +1,6 @@
-class UsersController < ApplicationController
+class Admin::UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy ]
-  before_action :protect_other_user, only: %i[ show new edit create update destroy ]
-  skip_before_action :login_required, only: %i[new create]
-  before_action :protect_from_general_user, only: %i[index]
+  before_action :protect_from_general_user
 
   # GET /users or /users.json
   def index
@@ -11,11 +9,12 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
+    @tasks = User.find_by(id: params[:id]).tasks
   end
 
   # GET /users/new
   def new
-  @user = User.new
+    @user = User.new
   end
 
   # GET /users/1/edit
@@ -28,8 +27,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        session[:id] = @user.id
-        format.html { redirect_to user_url(@user), notice: "User was successfully created." }
+        format.html { redirect_to @user, notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -40,9 +38,10 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1 or /users/1.json
   def update
+    @for_model_validate = params[:user][:admin]
     respond_to do |format|
       if @user.update(user_params)
-        format.html { redirect_to user_url(@user), notice: "User was successfully updated." }
+        format.html { redirect_to admin_users_path, notice: "User was successfully updated." }
         format.json { render :show, status: :ok, location: @user }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -54,9 +53,8 @@ class UsersController < ApplicationController
   # DELETE /users/1 or /users/1.json
   def destroy
     @user.destroy
-
     respond_to do |format|
-      format.html { redirect_to users_url, notice: "User was successfully destroyed." }
+      format.html { redirect_to admin_users_path, notice: "User was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -69,11 +67,7 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation)
-    end
-
-    def protect_other_user
-      redirect_to tasks_path unless current_user.id.to_s == params[:id]
+      params.require(:user).permit(:name, :email, :password, :password_confirmation, :admin)
     end
 
     def protect_from_general_user
