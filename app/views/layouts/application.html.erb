@@ -13,11 +13,13 @@
     <% end %>
     <% if logged_in? %>
       <%= link_to 'ログアウト', session_path(current_user.id), method: :delete %>
+      <%= link_to 'プロフィール', user_path(current_user.id)%>
+      <%= link_to 'タスクへ', tasks_path %>
+      <%= link_to '管理者画面へ', admin_users_path %>
     <% else %>
       <%= link_to 'ログイン', new_session_path %>
+      <%= link_to 'サインアップ', new_user_path %>
     <% end %>
-    <%= link_to 'サインアップ', new_user_path %>
-    <%= link_to 'タスクへ', tasks_path(reset_search_session: true) %>
     <%= yield %>
   </body>
 </html>
