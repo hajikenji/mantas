@@ -6,12 +6,15 @@ class TasksController < ApplicationController
     @status = params[:status]
     @search_name = params[:search_name]
     @priority = params[:priority]
+    @label = params[:labels]
 
     @tasks = current_user.tasks
+
     @tasks = @tasks.search_ambiguous(@search_name) if @search_name
 
     @tasks = @tasks.status_index(params[:status]) if params[:status].present?
     @tasks = @tasks.priority_index(params[:priority]) if params[:priority].present?
+    @tasks = @tasks.search_label(params[:labels].to_i) if params[:labels].present?
 
     case params[:name]
     when "sort_time"
@@ -23,7 +26,6 @@ class TasksController < ApplicationController
     end
 
     @tasks = @tasks.page(params[:page]).per(10)
-    # User.find(41)[:admin] = true 
 
   end
 
@@ -86,7 +88,14 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:name, :content, :time, :priority, :status)
+      params.require(:task).permit(
+                                    :name,
+                                    :content,
+                                    :time,
+                                    :priority,
+                                    :status,
+                                    label_ids: [] 
+                                  )
     end
 
 

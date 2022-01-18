@@ -14,6 +14,10 @@
     <%= form.label :priority %>
     <%= form.select :priority, Task.priorities.keys, { include_blank: '選択', selected: @priority } %>
 </div>
+<div class="field">
+    <%= form.label :labels %>
+    <%= form.select :labels, Label.pluck(:label_name, :id) , { include_blank: '選択', selected: @label }%>
+</div>
 <%= form.submit class: "btn btn-success" %>
 <br>
 <br>

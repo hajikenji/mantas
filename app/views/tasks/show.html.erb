@@ -26,5 +26,12 @@
         完了
         <% end %>
 </p>
+<p>
+  <strong>label:</strong>
+  <% @task.labels.each do |t| %>
+    <%= t.label_name %>
+  <% end %>
+
+</p>
 <%= link_to 'Edit', edit_task_path(@task) %> |
 <%= link_to 'Back', tasks_path %>
